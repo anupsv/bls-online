@@ -101,8 +101,8 @@ const Home = () => {
                     name="g1Bn"
                     value={g1Bn}
                     className="form-input"
-                    placeholder="john.doe@email.com"
-                    type="email"
+                    placeholder="{x:{'0x...'}, y:{'0x...'}, compressed: ''0x...'}"
+                    type="text"
                   />
                 </div>
                 <div className="mb-6">
@@ -114,7 +114,7 @@ const Home = () => {
                     name="g2Bn"
                     className="form-input"
                     placeholder="G2 TBD"
-                    type="email"
+                    type="text"
                   />
                 </div>
                 <button type="submit" className="btn btn-primary" onClick={() => runBn254()}>
@@ -150,8 +150,8 @@ const Home = () => {
                   name="g1"
                   value={g1}
                   className="form-input"
-                  placeholder="john.doe@email.com"
-                  type="email"
+                  placeholder="{x:{'0x...'}, y:{'0x...'}, compressed: ''0x...'}"
+                  type="text"
                 />
               </div>
               <div className="mb-6">
@@ -163,8 +163,8 @@ const Home = () => {
                   name="g2"
                   value={g2}
                   className="form-input"
-                  placeholder="john.doe@email.com"
-                  type="email"
+                  placeholder="{x:{c0: ..., c1: ...}, y:{c0: ..., c1: ...}, compressed:'0x...'}"
+                  type="text"
                 />
               </div>
               <button type="submit" className="btn btn-primary" onClick={() => runBls12381()}>
