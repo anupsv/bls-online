@@ -1,3 +1,5 @@
+"use client";
+
 import ImageFallback from "@/helpers/ImageFallback";
 import { getListPage } from "@/lib/contentParser";
 import { markdownify } from "@/lib/utils/textConverter";
@@ -6,114 +8,265 @@ import SeoMeta from "@/partials/SeoMeta";
 import Testimonials from "@/partials/Testimonials";
 import { Button, Feature } from "@/types";
 import { FaCheck } from "react-icons/fa/index.js";
+import { bls12_381 } from '@noble/curves/bls12-381';
+import { bn254 } from '@noble/curves/bn254';
+import {KeyboardEvent, useState} from "react";
+import { bytesToHex, hexToBytes, concatBytes, utf8ToBytes, numberToHexUnpadded } from '@noble/curves/abstract/utils';
+import {bls} from "@noble/curves/abstract/bls";
+
 
 const Home = () => {
-  const homepage = getListPage("homepage/_index.md");
-  const testimonial = getListPage("sections/testimonial.md");
-  const callToAction = getListPage("sections/call-to-action.md");
-  const { frontmatter } = homepage;
-  const {
-    banner,
-    features,
-  }: {
-    banner: { title: string; image: string; content?: string; button?: Button };
-    features: Feature[];
-  } = frontmatter;
+  const [pk, setPk] = useState("");
+  const [g1, setG1] = useState("");
+  const [g2, setG2] = useState("");
+
+  const [pkBn, setPkBn] = useState("");
+  const [g1Bn, setG1Bn] = useState("");
+  const [g2Bn, setG2Bn] = useState("");
+
+  const runBn254 = () => {
+    const privateKey = bn254.utils.randomPrivateKey()
+    setPkBn(`0x${bytesToHex(privateKey)}`)
+    const publicKeyG1 = bn254.ProjectivePoint.fromPrivateKey(privateKey)
+    // const publicKeyG2 = bls12_381.G2.ProjectivePoint.fromPrivateKey(privateKey);
+    setG1Bn(JSON.stringify({x: bnToHex(publicKeyG1.x), y: bnToHex(publicKeyG1.y), compressed: `0x${publicKeyG1.toHex(true)}`}))
+    // setG2(JSON.stringify({
+    //   x: {
+    //     c0: bnToHex(publicKeyG2.x.c0),
+    //     c1: bnToHex(publicKeyG2.x.c1),
+    //   },
+    //   y: {
+    //     c0: bnToHex(publicKeyG2.y.c0),
+    //     c1: bnToHex(publicKeyG2.y.c1),
+    //   },
+    //   compressed: `0x${publicKeyG2.toHex(true)}`}
+    // ))
+  };
+
+  const runBls12381 = () => {
+    const privateKey = bls12_381.utils.randomPrivateKey();
+    setPk(`0x${bytesToHex(privateKey)}`)
+    const publicKeyG1 = bls12_381.G1.ProjectivePoint.fromPrivateKey(privateKey);
+    const publicKeyG2 = bls12_381.G2.ProjectivePoint.fromPrivateKey(privateKey);
+    setG1(JSON.stringify({x: bnToHex(publicKeyG1.x), y: bnToHex(publicKeyG1.y), compressed: `0x${publicKeyG1.toHex(true)}`}))
+    setG2(JSON.stringify({
+      x: {
+        c0: bnToHex(publicKeyG2.x.c0),
+        c1: bnToHex(publicKeyG2.x.c1),
+      },
+      y: {
+        c0: bnToHex(publicKeyG2.y.c0),
+        c1: bnToHex(publicKeyG2.y.c1),
+      },
+      compressed: `0x${publicKeyG2.toHex(true)}`}
+    ))
+  };
+
+  const bnToHex = (bn: bigint) => {
+    let hex = bn.toString(16);
+    if (hex.length % 2) {
+      hex = '0' + hex;
+    }
+    return `0x${hex}`;
+  }
 
   return (
-    <>
-      <SeoMeta />
-      <section className="section pt-14">
-        <div className="container">
-          <div className="row justify-center">
-            <div className="mb-16 text-center lg:col-7">
-              <h1
-                className="mb-4"
-                dangerouslySetInnerHTML={markdownify(banner.title)}
-              />
-              <p
-                className="mb-8"
-                dangerouslySetInnerHTML={markdownify(banner.content ?? "")}
-              />
-              {banner.button!.enable && (
-                <a className="btn btn-primary" href={banner.button!.link}>
-                  {banner.button!.label}
-                </a>
-              )}
+    <section className="section-sm">
+      <div className="container">
+        <div className="row">
+          <div className="mx-auto md:col-10 lg:col-6">
+            <div className={"content"}>
+                <h2 className="mb-4">BN254 Curve</h2>
+                <hr/>
+                <div className="mb-6">
+                  <label htmlFor="pkBn" className="form-label">
+                    Private Key
+                  </label>
+                  <input
+                    id="pkBn"
+                    name="pkBn"
+                    value={pkBn}
+                    className="form-input"
+                    readOnly={true}
+                    placeholder="Private Key"
+                    type="text"
+                  />
+                </div>
+                <div className="mb-6">
+                  <label htmlFor="g1Bn" className="form-label">
+                    G1 PubKey (X,Y,compressed)
+                  </label>
+                  <input
+                    id="g1Bn"
+                    name="g1Bn"
+                    value={g1Bn}
+                    className="form-input"
+                    placeholder="john.doe@email.com"
+                    type="email"
+                  />
+                </div>
+                <div className="mb-6">
+                  <label htmlFor="g2Bn" className="form-label">
+                    G2 PubKey ( X(c0,c1), Y(c0,c1), compressed )
+                  </label>
+                  <input
+                    id="g2Bn"
+                    name="g2Bn"
+                    className="form-input"
+                    placeholder="G2 TBD"
+                    type="email"
+                  />
+                </div>
+                <button type="submit" className="btn btn-primary" onClick={() => runBn254()}>
+                  Submit
+                </button>
             </div>
-            {banner.image && (
-              <div className="col-12">
-                <ImageFallback
-                  src={banner.image}
-                  className="mx-auto"
-                  width="800"
-                  height="420"
-                  alt="banner image"
-                  priority
+          </div>
+
+          <div className="mx-auto md:col-10 lg:col-6">
+            <div className={"content"}>
+              <h2 className="mb-4">BLS12-381 Curve</h2>
+              <hr/>
+              <div className="mb-6">
+                <label htmlFor="pk" className="form-label">
+                  Private Key
+                </label>
+                <input
+                  id="pk"
+                  name="name"
+                  value={pk}
+                  className="form-input"
+                  readOnly={true}
+                  placeholder="Private Key"
+                  type="text"
                 />
               </div>
-            )}
+              <div className="mb-6">
+                <label htmlFor="g1" className="form-label">
+                  G1 PubKey (X,Y,compressed)
+                </label>
+                <input
+                  id="g1"
+                  name="g1"
+                  value={g1}
+                  className="form-input"
+                  placeholder="john.doe@email.com"
+                  type="email"
+                />
+              </div>
+              <div className="mb-6">
+                <label htmlFor="g2" className="form-label">
+                  G2 PubKey ( X(c0,c1), Y(c0,c1), compressed )
+                </label>
+                <input
+                  id="g2"
+                  name="g2"
+                  value={g2}
+                  className="form-input"
+                  placeholder="john.doe@email.com"
+                  type="email"
+                />
+              </div>
+              <button type="submit" className="btn btn-primary" onClick={() => runBls12381()}>
+                Submit
+              </button>
+            </div>
           </div>
         </div>
-      </section>
-
-      {features.map((feature, index: number) => (
-        <section
-          key={index}
-          className={`section-sm ${index % 2 === 0 && "bg-gradient"}`}
-        >
-          <div className="container">
-            <div className="row items-center justify-between">
-              <div
-                className={`mb:md-0 mb-6 md:col-5 ${
-                  index % 2 !== 0 && "md:order-2"
-                }`}
-              >
-                <ImageFallback
-                  src={feature.image}
-                  height={480}
-                  width={520}
-                  alt={feature.title}
-                />
-              </div>
-              <div
-                className={`md:col-7 lg:col-6 ${
-                  index % 2 !== 0 && "md:order-1"
-                }`}
-              >
-                <h2
-                  className="mb-4"
-                  dangerouslySetInnerHTML={markdownify(feature.title)}
-                />
-                <p
-                  className="mb-8 text-lg"
-                  dangerouslySetInnerHTML={markdownify(feature.content)}
-                />
-                <ul>
-                  {feature.bulletpoints.map((bullet: string) => (
-                    <li className="relative mb-4 pl-6" key={bullet}>
-                      <FaCheck className={"absolute left-0 top-1.5"} />
-                      <span dangerouslySetInnerHTML={markdownify(bullet)} />
-                    </li>
-                  ))}
-                </ul>
-                {feature.button.enable && (
-                  <a
-                    className="btn btn-primary mt-5"
-                    href={feature.button.link}
-                  >
-                    {feature.button.label}
-                  </a>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-      ))}
-
-      <Testimonials data={testimonial} />
-      <CallToAction data={callToAction} />
-    </>
+      </div>
+    </section>
+    // <>
+    //   <section className="section pt-14">
+    //     <div className="container">
+    //       <div className="row justify-center">
+    //         <div className="mb-16 text-center lg:col-7">
+    //           <h1
+    //             className="mb-4"
+    //             dangerouslySetInnerHTML={markdownify(banner.title)}
+    //           />
+    //           <p
+    //             className="mb-8"
+    //             dangerouslySetInnerHTML={markdownify(banner.content ?? "")}
+    //           />
+    //           {banner.button!.enable && (
+    //             <a className="btn btn-primary" href={banner.button!.link}>
+    //               {banner.button!.label}
+    //             </a>
+    //           )}
+    //         </div>
+    //         {banner.image && (
+    //           <div className="col-12">
+    //             <ImageFallback
+    //               src={banner.image}
+    //               className="mx-auto"
+    //               width="800"
+    //               height="420"
+    //               alt="banner image"
+    //               priority
+    //             />
+    //           </div>
+    //         )}
+    //       </div>
+    //     </div>
+    //   </section>
+    //
+    //   {features.map((feature, index: number) => (
+    //     <section
+    //       key={index}
+    //       className={`section-sm ${index % 2 === 0 && "bg-gradient"}`}
+    //     >
+    //       <div className="container">
+    //         <div className="row items-center justify-between">
+    //           <div
+    //             className={`mb:md-0 mb-6 md:col-5 ${
+    //               index % 2 !== 0 && "md:order-2"
+    //             }`}
+    //           >
+    //             <ImageFallback
+    //               src={feature.image}
+    //               height={480}
+    //               width={520}
+    //               alt={feature.title}
+    //             />
+    //           </div>
+    //           <div
+    //             className={`md:col-7 lg:col-6 ${
+    //               index % 2 !== 0 && "md:order-1"
+    //             }`}
+    //           >
+    //             <h2
+    //               className="mb-4"
+    //               dangerouslySetInnerHTML={markdownify(feature.title)}
+    //             />
+    //             <p
+    //               className="mb-8 text-lg"
+    //               dangerouslySetInnerHTML={markdownify(feature.content)}
+    //             />
+    //             <ul>
+    //               {feature.bulletpoints.map((bullet: string) => (
+    //                 <li className="relative mb-4 pl-6" key={bullet}>
+    //                   <FaCheck className={"absolute left-0 top-1.5"} />
+    //                   <span dangerouslySetInnerHTML={markdownify(bullet)} />
+    //                 </li>
+    //               ))}
+    //             </ul>
+    //             {feature.button.enable && (
+    //               <a
+    //                 className="btn btn-primary mt-5"
+    //                 href={feature.button.link}
+    //               >
+    //                 {feature.button.label}
+    //               </a>
+    //             )}
+    //           </div>
+    //         </div>
+    //       </div>
+    //     </section>
+    //   ))}
+    //
+    //   <Testimonials data={testimonial} />
+    //   <CallToAction data={callToAction} />
+    // </>
   );
 };
 
