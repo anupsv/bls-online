@@ -82,7 +82,7 @@ func (k *KeyPair) GetPubKeyG2() *G2Point {
 	return &G2Point{MulByGeneratorG2(k.PrivKey)}
 }
 
-func generaterandombn254data(w http.ResponseWriter, r *http.Request) {
+func Generaterandombn254data(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]string)
 	maxInt := new(big.Int)
 	maxInt.SetString(fr.Modulus().String(), 10)
