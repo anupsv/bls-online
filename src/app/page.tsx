@@ -55,12 +55,11 @@ const Home = () => {
       const res = await fetch(`/api/bn254HashToCurve?message=${encodeURIComponent(hashData)}`)
 
       const data = await res.json();
-      setPkBn(data["pk"]);
-      setG1Bn(JSON.stringify({
+      setG1HashToCurve(JSON.stringify({
         "x": data["g1.x"],
         "y": data["g1.y"]
       }));
-      setG2Bn(JSON.stringify({
+      setG2HashToCurve(JSON.stringify({
         "x": {
           "c0": data["g2.x.a0"],
           "c1": data["g2.x.a1"],
@@ -157,7 +156,7 @@ const Home = () => {
 
               <div className="mb-6">
                 <label htmlFor="hash-data" className="form-label">
-                  Private Key
+                  Data To Hash
                 </label>
                 <input
                   id="hash-data"
@@ -166,14 +165,14 @@ const Home = () => {
                   onChange={handleChange}
                   className="form-input"
                   readOnly={false}
-                  placeholder="Message to map to curve"
+                  placeholder="Message to Hash to curve"
                   type="text"
                 />
               </div>
 
               <div className="mb-6">
                 <label htmlFor="hash-g1" className="form-label">
-                  Private Key
+                  G1 Hash to Curve
                 </label>
                 <input
                   id="hash-g1"
@@ -186,8 +185,23 @@ const Home = () => {
                 />
               </div>
 
+              <div className="mb-6">
+                <label htmlFor="hash-g1" className="form-label">
+                  G2 Hash to Curve
+                </label>
+                <input
+                  id="hash-g1"
+                  name="hashG1"
+                  value={g2HashToCurve}
+                  className="form-input"
+                  readOnly={true}
+                  placeholder="G1 Hash to Curve output"
+                  type="text"
+                />
+              </div>
+
               <button type="submit" className="btn btn-primary" onClick={() => runHashToCurve()}>
-                Generate
+                Hash
               </button>
             </div>
           </div>
