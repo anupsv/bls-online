@@ -1,7 +1,7 @@
 "use client";
 
 import { bls12_381 } from '@noble/curves/bls12-381';
-import {useState} from "react";
+import React, {useState} from "react";
 import { bytesToHex, hexToBytes } from '@noble/curves/abstract/utils';
 
 const Home = () => {
@@ -9,23 +9,27 @@ const Home = () => {
   const [g1, setG1] = useState("");
   const [g2, setG2] = useState("");
   const [g1HashToCurve, setG1HashToCurve] = useState("");
+  const [hashData, setHashData] = useState("");
   const [g2HashToCurve, setG2HashToCurve] = useState("");
 
   const [pkBn, setPkBn] = useState("");
   const [g1Bn, setG1Bn] = useState("");
   const [g2Bn, setG2Bn] = useState("");
 
-  const runBn254 = async () => {
-    // const privateKey = bn254.utils.randomPrivateKey()
-    // setPkBn(`0x${bytesToHex(privateKey)}`)
-    // const publicKeyG1 = bn254.ProjectivePoint.fromPrivateKey(privateKey)
-    // // const publicKeyG2 = bls12_381.G2.ProjectivePoint.fromPrivateKey(privateKey);
-    // setG1Bn(JSON.stringify({x: bnToHex(publicKeyG1.x), y: bnToHex(publicKeyG1.y), compressed: `0x${publicKeyG1.toHex(true)}`}))
+  const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
+    if (e.currentTarget.value.length === 0){
+      alert("Need data to hash!")
+    }
+    else {
+      setHashData(e.currentTarget.value);
 
+    }
+  };
+
+  const runBn254 = async () => {
     try {
       const res = await fetch(`/api/generaterandombn254data`);
       const data = await res.json();
-      console.log(data);
       setPkBn(data["pk"]);
       setG1Bn(JSON.stringify({
         "x": data["g1.x"],
@@ -44,8 +48,39 @@ const Home = () => {
     } catch (err) {
       console.log(err);
     }
-
   };
+
+  const runG1HashToCurve = async () => {
+    try {
+      const res = await fetch(`/api/bn254HashToCurve`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({message: hashData})
+      });
+
+      const data = await res.json();
+      setPkBn(data["pk"]);
+      setG1Bn(JSON.stringify({
+        "x": data["g1.x"],
+        "y": data["g1.y"]
+      }));
+      setG2Bn(JSON.stringify({
+        "x": {
+          "c0": data["g2.x.c0"],
+          "c1": data["g2.x.c1"],
+        },
+        "y":{
+          "c0": data["g2.y.c0"],
+          "c1": data["g2.y.c1"],
+        }
+      }));
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   const runBls12381 = () => {
     const privateKey = bls12_381.utils.randomPrivateKey();
@@ -125,6 +160,42 @@ const Home = () => {
                 <button type="submit" className="btn btn-primary" onClick={() => runBn254()}>
                   Generate
                 </button>
+              <hr />
+
+              <div className="mb-6">
+                <label htmlFor="hash-data" className="form-label">
+                  Private Key
+                </label>
+                <input
+                  id="hash-data"
+                  name="hashData"
+                  value={hashData}
+                  onChange={handleChange}
+                  className="form-input"
+                  readOnly={false}
+                  placeholder="Message to map to curve"
+                  type="text"
+                />
+              </div>
+
+              <div className="mb-6">
+                <label htmlFor="hash-g1" className="form-label">
+                  Private Key
+                </label>
+                <input
+                  id="hash-g1"
+                  name="hashG1"
+                  value={g1HashToCurve}
+                  className="form-input"
+                  readOnly={true}
+                  placeholder="G1 Hash to Curve output"
+                  type="text"
+                />
+              </div>
+
+              <button type="submit" className="btn btn-primary" onClick={() => runG1HashToCurve()}>
+                Generate
+              </button>
             </div>
           </div>
 
