@@ -98,13 +98,13 @@ func Generaterandombn254data(w http.ResponseWriter, r *http.Request) {
 	skRep, _ := newPrivateKey(sk.String())
 	pkRep := newKeyPair(sk)
 
-	resp["pk"] = gimmeHex(skRep.String())
-	resp["g1.x"] = gimmeHex(pkRep.PubKey.X.String())
-	resp["g1.y"] = gimmeHex(pkRep.PubKey.Y.String())
-	resp["g2.x.c0"] = gimmeHex(pkRep.getPubKeyG2().X.A0.String())
-	resp["g2.x.c1"] = gimmeHex(pkRep.getPubKeyG2().X.A1.String())
-	resp["g2.y.c0"] = gimmeHex(pkRep.getPubKeyG2().Y.A0.String())
-	resp["g2.y.c1"] = gimmeHex(pkRep.getPubKeyG2().Y.A1.String())
+	resp["pk"] = skRep.String()
+	resp["g1.x"] = pkRep.PubKey.X.String()
+	resp["g1.y"] = pkRep.PubKey.Y.String()
+	resp["g2.x.c0"] = pkRep.getPubKeyG2().X.A0.String()
+	resp["g2.x.c1"] = pkRep.getPubKeyG2().X.A1.String()
+	resp["g2.y.c0"] = pkRep.getPubKeyG2().Y.A0.String()
+	resp["g2.y.c1"] = pkRep.getPubKeyG2().Y.A1.String()
 
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
