@@ -1,46 +1,52 @@
 "use client";
 
-import ImageFallback from "@/helpers/ImageFallback";
-import { getListPage } from "@/lib/contentParser";
-import { markdownify } from "@/lib/utils/textConverter";
-import CallToAction from "@/partials/CallToAction";
-import SeoMeta from "@/partials/SeoMeta";
-import Testimonials from "@/partials/Testimonials";
-import { Button, Feature } from "@/types";
-import { FaCheck } from "react-icons/fa/index.js";
 import { bls12_381 } from '@noble/curves/bls12-381';
 import { bn254 } from '@noble/curves/bn254';
-import {KeyboardEvent, useState} from "react";
-import { bytesToHex, hexToBytes, concatBytes, utf8ToBytes, numberToHexUnpadded } from '@noble/curves/abstract/utils';
-import {bls} from "@noble/curves/abstract/bls";
-
+import {useState} from "react";
+import { bytesToHex, hexToBytes } from '@noble/curves/abstract/utils';
+import bls from "@chainsafe/bls/herumi";
 
 const Home = () => {
   const [pk, setPk] = useState("");
   const [g1, setG1] = useState("");
   const [g2, setG2] = useState("");
+  const [g1HashToCurve, setG1HashToCurve] = useState("");
+  const [g2HashToCurve, setG2HashToCurve] = useState("");
 
   const [pkBn, setPkBn] = useState("");
   const [g1Bn, setG1Bn] = useState("");
   const [g2Bn, setG2Bn] = useState("");
 
-  const runBn254 = () => {
-    const privateKey = bn254.utils.randomPrivateKey()
-    setPkBn(`0x${bytesToHex(privateKey)}`)
-    const publicKeyG1 = bn254.ProjectivePoint.fromPrivateKey(privateKey)
-    // const publicKeyG2 = bls12_381.G2.ProjectivePoint.fromPrivateKey(privateKey);
-    setG1Bn(JSON.stringify({x: bnToHex(publicKeyG1.x), y: bnToHex(publicKeyG1.y), compressed: `0x${publicKeyG1.toHex(true)}`}))
-    // setG2(JSON.stringify({
-    //   x: {
-    //     c0: bnToHex(publicKeyG2.x.c0),
-    //     c1: bnToHex(publicKeyG2.x.c1),
-    //   },
-    //   y: {
-    //     c0: bnToHex(publicKeyG2.y.c0),
-    //     c1: bnToHex(publicKeyG2.y.c1),
-    //   },
-    //   compressed: `0x${publicKeyG2.toHex(true)}`}
-    // ))
+  const runBn254 = async () => {
+    // const privateKey = bn254.utils.randomPrivateKey()
+    // setPkBn(`0x${bytesToHex(privateKey)}`)
+    // const publicKeyG1 = bn254.ProjectivePoint.fromPrivateKey(privateKey)
+    // // const publicKeyG2 = bls12_381.G2.ProjectivePoint.fromPrivateKey(privateKey);
+    // setG1Bn(JSON.stringify({x: bnToHex(publicKeyG1.x), y: bnToHex(publicKeyG1.y), compressed: `0x${publicKeyG1.toHex(true)}`}))
+
+    try {
+      const res = await fetch(`/api/generaterandombn254data`);
+      const data = await res.json();
+      console.log(data);
+      setPkBn(data["pk"]);
+      setG1Bn(JSON.stringify({
+        "x": data["g1.x"],
+        "y": data["g1.y"]
+      }));
+      setG2Bn(JSON.stringify({
+        "x": {
+          "c0": data["g2.x.c0"],
+          "c1": data["g2.x.c1"],
+        },
+        "y":{
+          "c0": data["g2.y.c0"],
+          "c1": data["g2.y.c1"],
+        }
+      }));
+    } catch (err) {
+      console.log(err);
+    }
+
   };
 
   const runBls12381 = () => {
@@ -118,7 +124,7 @@ const Home = () => {
                   />
                 </div>
                 <button type="submit" className="btn btn-primary" onClick={() => runBn254()}>
-                  Submit
+                  Generate
                 </button>
             </div>
           </div>
@@ -168,7 +174,7 @@ const Home = () => {
                 />
               </div>
               <button type="submit" className="btn btn-primary" onClick={() => runBls12381()}>
-                Submit
+                Generate
               </button>
             </div>
           </div>
