@@ -2,6 +2,7 @@ package handler
 
 import (
 	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"github.com/consensys/gnark-crypto/ecc/bn254"
@@ -82,6 +83,10 @@ func (k *KeyPair) GetPubKeyG2() *G2Point {
 	return &G2Point{MulByGeneratorG2(k.PrivKey)}
 }
 
+func gimmeHex(data string) string {
+	return "0x" + hex.EncodeToString([]byte(data))
+}
+
 func Generaterandombn254data(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]string)
 	maxInt := new(big.Int)
@@ -93,13 +98,13 @@ func Generaterandombn254data(w http.ResponseWriter, r *http.Request) {
 	skRep, _ := NewPrivateKey(sk.String())
 	pkRep := NewKeyPair(sk)
 
-	resp["pk"] = skRep.String()
-	resp["g1.x"] = pkRep.PubKey.X.String()
-	resp["g1.y"] = pkRep.PubKey.Y.String()
-	resp["g2.x.c0"] = pkRep.GetPubKeyG2().X.A0.String()
-	resp["g2.x.c1"] = pkRep.GetPubKeyG2().X.A1.String()
-	resp["g2.y.c0"] = pkRep.GetPubKeyG2().Y.A0.String()
-	resp["g2.y.c1"] = pkRep.GetPubKeyG2().Y.A1.String()
+	resp["pk"] = gimmeHex(skRep.String())
+	resp["g1.x"] = gimmeHex(pkRep.PubKey.X.String())
+	resp["g1.y"] = gimmeHex(pkRep.PubKey.Y.String())
+	resp["g2.x.c0"] = gimmeHex(pkRep.GetPubKeyG2().X.A0.String())
+	resp["g2.x.c1"] = gimmeHex(pkRep.GetPubKeyG2().X.A1.String())
+	resp["g2.y.c0"] = gimmeHex(pkRep.GetPubKeyG2().Y.A0.String())
+	resp["g2.y.c1"] = gimmeHex(pkRep.GetPubKeyG2().Y.A1.String())
 
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
