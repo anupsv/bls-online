@@ -94,17 +94,17 @@ func Generaterandombn254data(w http.ResponseWriter, r *http.Request) {
 
 	//Generate cryptographically strong pseudo-random between 0 - max
 	n, _ := rand.Int(rand.Reader, maxInt)
-	sk := new(PrivateKey).SetBigInt(n)
-	skRep, _ := NewPrivateKey(sk.String())
-	pkRep := NewKeyPair(sk)
+	sk := new(privateKey).SetBigInt(n)
+	skRep, _ := newPrivateKey(sk.String())
+	pkRep := newKeyPair(sk)
 
 	resp["pk"] = gimmeHex(skRep.String())
 	resp["g1.x"] = gimmeHex(pkRep.PubKey.X.String())
 	resp["g1.y"] = gimmeHex(pkRep.PubKey.Y.String())
-	resp["g2.x.c0"] = gimmeHex(pkRep.GetPubKeyG2().X.A0.String())
-	resp["g2.x.c1"] = gimmeHex(pkRep.GetPubKeyG2().X.A1.String())
-	resp["g2.y.c0"] = gimmeHex(pkRep.GetPubKeyG2().Y.A0.String())
-	resp["g2.y.c1"] = gimmeHex(pkRep.GetPubKeyG2().Y.A1.String())
+	resp["g2.x.c0"] = gimmeHex(pkRep.getPubKeyG2().X.A0.String())
+	resp["g2.x.c1"] = gimmeHex(pkRep.getPubKeyG2().X.A1.String())
+	resp["g2.y.c0"] = gimmeHex(pkRep.getPubKeyG2().Y.A0.String())
+	resp["g2.y.c1"] = gimmeHex(pkRep.getPubKeyG2().Y.A1.String())
 
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
