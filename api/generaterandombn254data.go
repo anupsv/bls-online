@@ -98,7 +98,7 @@ func Generaterandombn254data(w http.ResponseWriter, r *http.Request) {
 	skRep, _ := newPrivateKey(sk.String())
 	pkRep := newKeyPair(sk)
 
-	resp["pk"] = skRep.String()
+	resp["pk"] = skRep.String() + skRep.Text(16)
 	resp["g1.x"] = pkRep.PubKey.X.String()
 	resp["g1.y"] = pkRep.PubKey.Y.String()
 	resp["g2.x.c0"] = pkRep.getPubKeyG2().X.A0.String()
