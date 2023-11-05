@@ -52,14 +52,7 @@ const Home = () => {
 
   const runG1HashToCurve = async () => {
     try {
-      const res = await fetch(`/api/bn254HashToCurve`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({message: hashData})
-      });
+      const res = await fetch(`/api/bn254HashToCurve?message=${encodeURIComponent(hashData)}`)
 
       const data = await res.json();
       setPkBn(data["pk"]);
