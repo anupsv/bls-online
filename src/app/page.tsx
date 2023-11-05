@@ -3,6 +3,7 @@
 import { bls12_381 } from '@noble/curves/bls12-381';
 import React, {useState} from "react";
 import { bytesToHex, hexToBytes } from '@noble/curves/abstract/utils';
+import {ca} from "date-fns/locale";
 
 const Home = () => {
   const [pk, setPk] = useState("");
@@ -74,23 +75,25 @@ const Home = () => {
     }
   }
 
-  const runBls12381 = () => {
-    const privateKey = bls12_381.utils.randomPrivateKey();
-    setPk(`0x${bytesToHex(privateKey)}`)
-    const publicKeyG1 = bls12_381.G1.ProjectivePoint.fromPrivateKey(privateKey);
-    const publicKeyG2 = bls12_381.G2.ProjectivePoint.fromPrivateKey(privateKey);
-    setG1(JSON.stringify({x: bnToHex(publicKeyG1.x), y: bnToHex(publicKeyG1.y), compressed: `0x${publicKeyG1.toHex(true)}`}))
-    setG2(JSON.stringify({
-      x: {
-        c0: bnToHex(publicKeyG2.x.c0),
-        c1: bnToHex(publicKeyG2.x.c1),
-      },
-      y: {
-        c0: bnToHex(publicKeyG2.y.c0),
-        c1: bnToHex(publicKeyG2.y.c1),
-      },
-      compressed: `0x${publicKeyG2.toHex(true)}`}
-    ))
+  const runBls12381 = async () => {
+
+    try{
+      const res = await fetch(`/api/generaterandomBls12381data`);
+      const data = await res.json();
+      setPk(data["pk"])
+      setG1(JSON.stringify({x: data["g1.x"], y: data["g1.y"]}))
+      setG2(JSON.stringify({        x: {
+          c0: data["g2.x.a0"],
+          c1: data["g2.x.a1"]
+        },
+        y: {
+          c0: data["g2.x.a0"],
+          c1: data["g2.x.a1"]
+        }}))
+
+    } catch (e) {
+      console.log(e)
+    }
   };
 
   const bnToHex = (bn: bigint) => {
