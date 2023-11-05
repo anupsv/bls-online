@@ -1,10 +1,8 @@
 "use client";
 
 import { bls12_381 } from '@noble/curves/bls12-381';
-import { bn254 } from '@noble/curves/bn254';
 import {useState} from "react";
 import { bytesToHex, hexToBytes } from '@noble/curves/abstract/utils';
-import bls from "@chainsafe/bls/herumi";
 
 const Home = () => {
   const [pk, setPk] = useState("");
