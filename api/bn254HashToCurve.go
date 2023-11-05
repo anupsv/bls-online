@@ -118,9 +118,15 @@ func Bn254HashToCurve(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]string)
 
 	message, _ := url.QueryUnescape(r.URL.Query().Get("message"))
+	g1Hash, _ := bn254.HashToG1([]byte(message), []byte{})
+	g2Hash, _ := bn254.HashToG2([]byte(message), []byte{})
 
-	resp["g1.x"] = MapToCurve([32]byte([]byte(message))).X.String()
-	resp["g1.y"] = MapToCurve([32]byte([]byte(message))).Y.String()
+	resp["g1.x"] = "0x" + g1Hash.X.Text(16)
+	resp["g1.y"] = "0x" + g1Hash.Y.Text(16)
+	resp["g2.x.a0"] = "0x" + g2Hash.X.A0.Text(16)
+	resp["g2.x.a1"] = "0x" + g2Hash.X.A1.Text(16)
+	resp["g2.y.a0"] = "0x" + g2Hash.Y.A0.Text(16)
+	resp["g2.y.a1"] = "0x" + g2Hash.Y.A1.Text(16)
 
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
