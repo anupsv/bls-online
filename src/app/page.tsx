@@ -105,7 +105,7 @@ const Home = () => {
                     name="g1Bn"
                     value={g1Bn}
                     className="form-input"
-                    placeholder="{x:{'0x...'}, y:{'0x...'}, compressed: ''0x...'}"
+                    placeholder="{x:{'0x...'}, y:{'0x...'}}"
                     type="text"
                   />
                 </div>
@@ -118,7 +118,7 @@ const Home = () => {
                     name="g2Bn"
                     value={g2Bn}
                     className="form-input"
-                    placeholder="{x:{c0: ..., c1: ...}, y:{c0: ..., c1: ...}, compressed:'0x...'}"
+                    placeholder="{x:{c0: ..., c1: ...}, y:{c0: ..., c1: ...}}"
                     type="text"
                   />
                 </div>
