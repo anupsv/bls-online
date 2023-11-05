@@ -186,16 +186,16 @@ const Home = () => {
               </div>
 
               <div className="mb-6">
-                <label htmlFor="hash-g1" className="form-label">
+                <label htmlFor="hash-g2" className="form-label">
                   G2 Hash to Curve
                 </label>
                 <input
-                  id="hash-g1"
-                  name="hashG1"
+                  id="hash-g2"
+                  name="hashG2"
                   value={g2HashToCurve}
                   className="form-input"
                   readOnly={true}
-                  placeholder="G1 Hash to Curve output"
+                  placeholder="G2 Hash to Curve output"
                   type="text"
                 />
               </div>
