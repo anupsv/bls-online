@@ -116,8 +116,9 @@ const Home = () => {
                   <input
                     id="g2Bn"
                     name="g2Bn"
+                    value={g2Bn}
                     className="form-input"
-                    placeholder="G2 TBD"
+                    placeholder="{x:{c0: ..., c1: ...}, y:{c0: ..., c1: ...}, compressed:'0x...'}"
                     type="text"
                   />
                 </div>
