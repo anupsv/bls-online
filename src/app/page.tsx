@@ -50,7 +50,7 @@ const Home = () => {
     }
   };
 
-  const runG1HashToCurve = async () => {
+  const runHashToCurve = async () => {
     try {
       const res = await fetch(`/api/bn254HashToCurve?message=${encodeURIComponent(hashData)}`)
 
@@ -186,7 +186,7 @@ const Home = () => {
                 />
               </div>
 
-              <button type="submit" className="btn btn-primary" onClick={() => runG1HashToCurve()}>
+              <button type="submit" className="btn btn-primary" onClick={() => runHashToCurve()}>
                 Generate
               </button>
             </div>
