@@ -62,12 +62,12 @@ const Home = () => {
       }));
       setG2Bn(JSON.stringify({
         "x": {
-          "c0": data["g2.x.c0"],
-          "c1": data["g2.x.c1"],
+          "c0": data["g2.x.a0"],
+          "c1": data["g2.x.a1"],
         },
         "y":{
-          "c0": data["g2.y.c0"],
-          "c1": data["g2.y.c1"],
+          "c0": data["g2.y.a0"],
+          "c1": data["g2.y.a1"],
         }
       }));
     } catch (err) {
