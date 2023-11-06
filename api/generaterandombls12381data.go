@@ -96,10 +96,10 @@ func GeneraterandomBls12381data(w http.ResponseWriter, r *http.Request) {
 	resp["pk"] = "0x" + skRep.Text(16)
 	resp["g1.x"] = "0x" + pkRep.PubKey.X.Text(16)
 	resp["g1.y"] = "0x" + pkRep.PubKey.Y.Text(16)
-	resp["g2.x.c0"] = "0x" + pkRep.getPubKeyG2().X.A0.Text(16)
-	resp["g2.x.c1"] = "0x" + pkRep.getPubKeyG2().X.A1.Text(16)
-	resp["g2.y.c0"] = "0x" + pkRep.getPubKeyG2().Y.A0.Text(16)
-	resp["g2.y.c1"] = "0x" + pkRep.getPubKeyG2().Y.A1.Text(16)
+	resp["g2.x.a0"] = "0x" + pkRep.getPubKeyG2().X.A0.Text(16)
+	resp["g2.x.a1"] = "0x" + pkRep.getPubKeyG2().X.A1.Text(16)
+	resp["g2.y.a0"] = "0x" + pkRep.getPubKeyG2().Y.A0.Text(16)
+	resp["g2.y.a1"] = "0x" + pkRep.getPubKeyG2().Y.A1.Text(16)
 
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
