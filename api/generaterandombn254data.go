@@ -3,7 +3,6 @@ package handler
 import (
 	"crypto/rand"
 	"encoding/json"
-	"fmt"
 	"github.com/consensys/gnark-crypto/ecc/bn254"
 	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	"math/big"
@@ -88,23 +87,30 @@ func Generaterandombn254data(w http.ResponseWriter, r *http.Request) {
 	maxInt.SetString(fr.Modulus().String(), 10)
 
 	//Generate cryptographically strong pseudo-random between 0 - max
-	n, _ := rand.Int(rand.Reader, maxInt)
-	sk := new(privateKey).SetBigInt(n)
-	skRep, _ := newPrivateKey(sk.String())
-	pkRep := newKeyPair(sk)
-
-	resp["pk"] = "0x" + skRep.Text(16)
-	resp["g1.x"] = "0x" + pkRep.PubKey.X.Text(16)
-	resp["g1.y"] = "0x" + pkRep.PubKey.Y.Text(16)
-	resp["g2.x.c0"] = "0x" + pkRep.getPubKeyG2().X.A0.Text(16)
-	resp["g2.x.c1"] = "0x" + pkRep.getPubKeyG2().X.A1.Text(16)
-	resp["g2.y.c0"] = "0x" + pkRep.getPubKeyG2().Y.A0.Text(16)
-	resp["g2.y.c1"] = "0x" + pkRep.getPubKeyG2().Y.A1.Text(16)
-
-	jsonResp, err := json.Marshal(resp)
+	n, err := rand.Int(rand.Reader, maxInt)
 	if err != nil {
-		fmt.Println("Error happened in JSON marshal. Err:", err)
+		resp["error"] = err.Error()
 	} else {
-		w.Write(jsonResp)
+		sk := new(privateKey).SetBigInt(n)
+		skRep, err2 := newPrivateKey(sk.String())
+		if err2 != nil {
+			resp["error"] = err2.Error()
+		} else {
+			pkRep := newKeyPair(sk)
+			resp["pk"] = "0x" + skRep.Text(16)
+			resp["g1.x"] = "0x" + pkRep.PubKey.X.Text(16)
+			resp["g1.y"] = "0x" + pkRep.PubKey.Y.Text(16)
+			resp["g2.x.c0"] = "0x" + pkRep.getPubKeyG2().X.A0.Text(16)
+			resp["g2.x.c1"] = "0x" + pkRep.getPubKeyG2().X.A1.Text(16)
+			resp["g2.y.c0"] = "0x" + pkRep.getPubKeyG2().Y.A0.Text(16)
+			resp["g2.y.c1"] = "0x" + pkRep.getPubKeyG2().Y.A1.Text(16)
+		}
 	}
+
+	jsonResp, err3 := json.Marshal(resp)
+	if err3 != nil {
+		resp["error"] = err3.Error()
+	}
+	w.Write(jsonResp)
+
 }
