@@ -331,7 +331,7 @@ const Home = () => {
                   id="hashDataBls"
                   name="hashDataBls"
                   value={hashDataBls}
-                  onChange={handleChangeBn}
+                  onChange={handleChangeBls}
                   className="form-input"
                   readOnly={false}
                   placeholder="Message to Hash to curve"
