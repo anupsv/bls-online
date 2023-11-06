@@ -1,9 +1,6 @@
 "use client";
 
-import { bls12_381 } from '@noble/curves/bls12-381';
 import React, {useState} from "react";
-import { bytesToHex, hexToBytes } from '@noble/curves/abstract/utils';
-import {ca} from "date-fns/locale";
 
 const Home = () => {
   const [pk, setPk] = useState("");
@@ -12,19 +9,14 @@ const Home = () => {
   const [g1HashToCurve, setG1HashToCurve] = useState("");
   const [hashData, setHashData] = useState("");
   const [g2HashToCurve, setG2HashToCurve] = useState("");
+  const [hashErr, setHashErr] = useState("");
 
   const [pkBn, setPkBn] = useState("");
   const [g1Bn, setG1Bn] = useState("");
   const [g2Bn, setG2Bn] = useState("");
 
   const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
-    if (e.currentTarget.value.length === 0){
-      alert("Need data to hash!")
-    }
-    else {
-      setHashData(e.currentTarget.value);
-
-    }
+    setHashData(e.currentTarget.value);
   };
 
   const runBn254 = async () => {
@@ -52,6 +44,12 @@ const Home = () => {
   };
 
   const runHashToCurve = async () => {
+
+    if (hashData.length === 0){
+      alert("Need data to hash!")
+      return;
+    }
+
     try {
       const res = await fetch(`/api/bn254HashToCurve?message=${encodeURIComponent(hashData)}`)
 
@@ -72,6 +70,8 @@ const Home = () => {
       }));
     } catch (err) {
       console.log(err);
+      // @ts-ignore
+      setHashErr(err)
     }
   }
 
@@ -95,14 +95,6 @@ const Home = () => {
       console.log(e)
     }
   };
-
-  const bnToHex = (bn: bigint) => {
-    let hex = bn.toString(16);
-    if (hex.length % 2) {
-      hex = '0' + hex;
-    }
-    return `0x${hex}`;
-  }
 
   return (
     <section className="section-sm">
@@ -206,8 +198,35 @@ const Home = () => {
               <button type="submit" className="btn btn-primary" onClick={() => runHashToCurve()}>
                 Hash
               </button>
+
+              {hashErr
+                &&
+                <div className={`notice error`}>
+                  <div className="notice-head">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        d="M10 0C15.522 0 20 4.478 20 10C20 15.522 15.522 20 10 20C4.478 20 0 15.522 0 10C0 4.478 4.478 0 10 0ZM10 2C5.589 2 2 5.589 2 10C2 14.411 5.589 18 10 18C14.411 18 18 14.411 18 10C18 5.589 14.411 2 10 2ZM12.293 6.293L13.707 7.707L11.414 10L13.707 12.293L12.293 13.707L10 11.414L7.707 13.707L6.293 12.293L8.586 10L6.293 7.707L7.707 6.293L10 8.586L12.293 6.293Z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                    <p className="my-0 ml-1.5">Error</p>
+                  </div>
+                  <div className="notice-body">{hashErr}</div>
+                </div>
+              }
+
             </div>
           </div>
+
+          {/* BLS 12-381 */}
 
           <div className="mx-auto md:col-10 lg:col-6">
             <div className={"content"}>
