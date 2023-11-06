@@ -25,6 +25,10 @@ const Home = () => {
     setHashDataBn(e.currentTarget.value);
   };
 
+  const handleChangeBls = (e: React.FormEvent<HTMLInputElement>) => {
+    setHashDataBls(e.currentTarget.value);
+  };
+
   const runBn254 = async () => {
     try {
       const res = await fetch(`/api/generaterandombn254data`);
@@ -52,7 +56,34 @@ const Home = () => {
   };
 
   const runHashToCurveBls = async () => {
+    if (hashDataBls.length === 0){
+      alert("Need data to hash!")
+      return;
+    }
 
+    try {
+      const res = await fetch(`/api/bls12381HashToCurve?message=${encodeURIComponent(hashDataBls)}`)
+
+      const data = await res.json();
+      setG1HashToCurveBls(JSON.stringify({
+        "x": data["g1.x"],
+        "y": data["g1.y"]
+      }));
+      setG2HashToCurveBls(JSON.stringify({
+        "x": {
+          "c0": data["g2.x.a0"],
+          "c1": data["g2.x.a1"],
+        },
+        "y":{
+          "c0": data["g2.y.a0"],
+          "c1": data["g2.y.a1"],
+        }
+      }));
+    } catch (err) {
+      console.log(err);
+      // @ts-ignore
+      setHashErrBls(err)
+    }
   }
   const runHashToCurveBn = async () => {
 
@@ -291,6 +322,7 @@ const Home = () => {
 
               {renderErr(genErrBls)}
 
+              <hr />
               <div className="mb-6">
                 <label htmlFor="hashDataBls" className="form-label">
                   Data To Hash
@@ -341,6 +373,7 @@ const Home = () => {
                 Hash
               </button>
               {renderErr(hashErrBls)}
+
             </div>
           </div>
         </div>
