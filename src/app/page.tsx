@@ -1,6 +1,8 @@
 "use client";
 
 import React, {useState} from "react";
+import Bls12381SignVerify from "@/partials/Bls12381SignVerify";
+import Bn254SignVerify from "@/partials/Bn254SignVerify";
 
 const Home = () => {
   const [pkBls, setPk] = useState("");
@@ -269,7 +271,8 @@ const Home = () => {
               {renderErr(hashErrBn)}
             </div>
           </div>
-
+          <hr/>
+          <Bn254SignVerify />
           {/* BLS 12-381 */}
 
           <div className="mx-auto md:col-10 lg:col-6">
@@ -374,6 +377,9 @@ const Home = () => {
               </button>
               {renderErr(hashErrBls)}
 
+              <hr/>
+
+              <Bls12381SignVerify />
             </div>
           </div>
         </div>
