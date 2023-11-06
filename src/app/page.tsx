@@ -185,7 +185,7 @@ const Home = () => {
                 </div>
                 <div className="mb-6">
                   <label htmlFor="g1Bn" className="form-label">
-                    G1 PubKey (X,Y,compressed)
+                    G1 PubKey (X,Y)
                   </label>
                   <input
                     id="g1Bn"
@@ -198,7 +198,7 @@ const Home = () => {
                 </div>
                 <div className="mb-6">
                   <label htmlFor="g2Bn" className="form-label">
-                    G2 PubKey ( X(c0,c1), Y(c0,c1), compressed )
+                    G2 PubKey ( X(c0,c1), Y(c0,c1) )
                   </label>
                   <input
                     id="g2Bn"
@@ -292,27 +292,27 @@ const Home = () => {
               </div>
               <div className="mb-6">
                 <label htmlFor="g1Bls" className="form-label">
-                  G1 PubKey (X,Y,compressed)
+                  G1 PubKey (X,Y)
                 </label>
                 <input
                   id="g1Bls"
                   name="g1Bls"
                   value={g1Bls}
                   className="form-input"
-                  placeholder="{x:{'0x...'}, y:{'0x...'}, compressed: ''0x...'}"
+                  placeholder="{x:{'0x...'}, y:{'0x...'}}"
                   type="text"
                 />
               </div>
               <div className="mb-6">
                 <label htmlFor="g2Bls" className="form-label">
-                  G2 PubKey ( X(c0,c1), Y(c0,c1), compressed )
+                  G2 PubKey ( X(c0,c1), Y(c0,c1) )
                 </label>
                 <input
                   id="g2Bls"
                   name="g2Bls"
                   value={g2Bls}
                   className="form-input"
-                  placeholder="{x:{c0: ..., c1: ...}, y:{c0: ..., c1: ...}, compressed:'0x...'}"
+                  placeholder="{x:{c0: ..., c1: ...}, y:{c0: ..., c1: ...}}"
                   type="text"
                 />
               </div>
